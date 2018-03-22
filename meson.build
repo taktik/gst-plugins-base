@@ -1,5 +1,5 @@
 project('gst-plugins-base', 'c',
-  version : '1.13.91',
+  version : '1.15.0.1',
   meson_version : '>= 0.36.0',
   default_options : [ 'warning_level=1',
                       'buildtype=debugoptimized' ])
@@ -79,6 +79,7 @@ check_headers = [
   ['HAVE_UNISTD_H', 'unistd.h'],
   ['HAVE_WINSOCK2_H', 'winsock2.h'],
   ['HAVE_XMMINTRIN_H', 'xmmintrin.h'],
+  ['HAVE_LINUX_DMA_BUF_H', 'linux/dma-buf.h'],
 ]
 foreach h : check_headers
   if cc.has_header(h.get(1))
