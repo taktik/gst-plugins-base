@@ -257,7 +257,7 @@ gst_gl_context_eagl_create_context (GstGLContext * context, GstGLAPI gl_api,
   } else {
         dispatch_sync(dispatch_get_main_queue(), ^{
           gst_gl_context_eagl_update_layer (context);
-        }
+        });
   }
   return TRUE;
 }
