@@ -252,8 +252,13 @@ gst_gl_context_eagl_create_context (GstGLContext * context, GstGLAPI gl_api,
   priv->depth_renderbuffer = 0;
 
   GST_INFO_OBJECT (context, "context created, updating layer");
-  gst_gl_context_eagl_update_layer (context);
-
+  if ([NSThread isMainThread]) {
+      gst_gl_context_eagl_update_layer (context);
+  } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+          gst_gl_context_eagl_update_layer (context);
+        }
+  }
   return TRUE;
 }
 
@@ -293,7 +298,7 @@ gst_gl_context_eagl_choose_format (GstGLContext * context, GError ** error)
     gst_object_unref (window);
     return TRUE;
   }
-  
+
   CAEAGLLayer *eagl_layer;
   NSDictionary * dict =[NSDictionary dictionaryWithObjectsAndKeys:
       [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
@@ -319,7 +324,7 @@ gst_gl_context_eagl_prepare_draw (GstGLContextEagl * context)
 {
   if (!context->priv->eagl_layer)
     return;
-  
+
   glBindFramebuffer (GL_FRAMEBUFFER, context->priv->framebuffer);
   glBindRenderbuffer (GL_RENDERBUFFER, context->priv->color_renderbuffer);
 }

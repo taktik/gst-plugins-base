@@ -135,9 +135,15 @@ gst_gl_window_eagl_set_window_handle (GstGLWindow * window, guintptr handle)
 
   window_eagl->priv->view = (gpointer)handle;
   GST_INFO_OBJECT (context, "handle set, updating layer");
-  gst_gl_context_eagl_update_layer (context);
-
-  gst_object_unref (context);
+  if ([NSThread isMainThread]) {
+      gst_gl_context_eagl_update_layer (context);
+      gst_object_unref (context);
+  } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+          gst_gl_context_eagl_update_layer (context);
+          gst_object_unref (context);
+        }
+  }
 }
 
 static void
